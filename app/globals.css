@@ -10,24 +10,31 @@
 *{box-sizing:border-box; margin:0; padding:0;}
 body{
   min-height:100vh;
-  background:var(--bg);
+  min-height:100dvh;
+  background:var(--paper);
   color:var(--ink);
   font-family:'Space Grotesk',-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;
   -webkit-font-smoothing:antialiased;
-  display:grid;
-  place-items:center;
-  padding:32px 18px;
 }
 button{font:inherit;}
 .display{font-family:'Archivo Black','Space Grotesk',sans-serif;}
 
-.wrap{display:flex; flex-direction:column; align-items:center; gap:18px;}
+/* The popup is now the whole view: full-bleed, no card, no surrounding
+   background or margin, no border / radius / shadow. */
+.wrap{
+  width:100%;
+  min-height:100vh;
+  min-height:100dvh;
+  display:flex;
+  flex-direction:column;
+}
 .popup{
-  width:340px; height:612px;
-  background:var(--paper); border:2.5px solid var(--ink);
-  border-radius:16px; overflow:hidden;
-  display:flex; flex-direction:column;
-  box-shadow:7px 7px 0 var(--ink);
+  flex:1;
+  width:100%;
+  background:var(--paper);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
 }
 .pophead{
   height:46px; flex:0 0 auto;
@@ -40,7 +47,7 @@ button{font:inherit;}
 .ext-tools{margin-left:auto; display:flex; gap:3px; color:var(--ink); opacity:.35;}
 .dot{width:6px; height:6px; border-radius:50%; background:currentColor;}
 
-.screen{flex:1; display:none; flex-direction:column; padding:18px;}
+.screen{flex:1; display:none; flex-direction:column; padding:18px; overflow-y:auto;}
 .screen.active{display:flex;}
 .lbl{font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:.2em; text-align:center; font-weight:700;}
 .bignum{font-weight:700; letter-spacing:-.02em;}
@@ -106,8 +113,3 @@ button{font:inherit;}
 .check{width:84px; height:84px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
 .usdc-logo{width:68px; height:68px; display:block; object-fit:contain;}
 .check-badge{position:absolute; right:7px; bottom:7px; width:24px; height:24px; border-radius:50%; background:var(--green); border:2px solid var(--paper); display:flex; align-items:center; justify-content:center; color:#fff; box-shadow:0 0 0 2px var(--ink);}
-
-.prototype-controls{display:flex; align-items:center; gap:10px;}
-.step-dot{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ink); background:var(--paper); opacity:.55;}
-.step-dot.active{background:var(--red); opacity:1;}
-.reset{background:transparent; border:0; color:var(--muted); cursor:pointer; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.08em;}

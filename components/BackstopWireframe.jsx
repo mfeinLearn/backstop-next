@@ -41,7 +41,6 @@ export default function PanicSell() {
   const [tick, setTick] = useState(0);
 
   const next = () => setStep((s) => Math.min(s + 1, 3));
-  const reset = () => setStep(0);
 
   useEffect(() => {
     if (step !== 2) return;
@@ -165,13 +164,6 @@ export default function PanicSell() {
           </div>
           <button className="cta ghost" type="button" style={{ marginTop: 'auto' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z" /><path d="M8 7h8M8 11h6" /></svg>View txns</button>
         </section>
-      </div>
-
-      <div className="prototype-controls" aria-label="Prototype progress">
-        {[0, 1, 2, 3].map((i) => (
-          <span className={`step-dot${i === step ? ' active' : ''}`} key={i} />
-        ))}
-        <button className="reset" type="button" onClick={reset}>Reset</button>
       </div>
     </main>
   );
