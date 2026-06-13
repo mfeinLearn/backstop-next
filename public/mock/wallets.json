@@ -1,0 +1,9 @@
+{
+  "data": [
+    { "id": "A1", "label": "Treasury — primary", "addr": "0x7a3f…b91c", "bal": "12.84 ETH", "usd": "$41,210", "usdValue": 41210 },
+    { "id": "A2", "label": "Trading agent", "addr": "0x1d90…44ae", "bal": "3.502 ETH", "usd": "$11,240", "usdValue": 11240 },
+    { "id": "A3", "label": "Gas reserve", "addr": "0xf2c1…0d77", "bal": "0.91 ETH", "usd": "$2,920", "usdValue": 2920 },
+    { "id": "A4", "label": "Yield position", "addr": "0x88be…c3f0", "bal": "USDC 8,400", "usd": "$8,400", "usdValue": 8400 },
+    { "id": "A5", "label": "Cold backup", "addr": "0x04aa…1e62", "bal": "1.20 ETH", "usd": "$3,850", "usdValue": 3850 }
+  ]
+}
