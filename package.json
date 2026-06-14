@@ -9,8 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dynamic-labs/ethereum": "^4.88.6",
+    "@dynamic-labs/sdk-react-core": "^4.88.6",
+    "@lifi/compose-spec": "staging",
+    "@lifi/composer-sdk": "0.2.0-staging.5",
     "next": "14.2.5",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "viem": "^2.52.2"
   }
 }

@@ -1,14 +1,17 @@
 import "./globals.css";
+import { Providers } from "./providers";
 
 export const metadata = {
-  title: "Backstop — Wind-Down",
-  description: "Agent wind-down / dead-man's switch wireframe",
+  title: "Panic Sell — Everything to USDC",
+  description: "One-tap liability-aware DeFi exit",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
