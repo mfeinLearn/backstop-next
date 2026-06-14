@@ -251,3 +251,11 @@ button{font:inherit;}
 .step-dot{width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ink); background:var(--paper); opacity:.55;}
 .step-dot.active{background:var(--red); opacity:1;}
 .reset{background:transparent; border:0; color:var(--muted); cursor:pointer; font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:.08em;}
+
+/* Transactions screen — explorer-linked rows */
+a.arow{text-decoration:none; color:inherit; cursor:pointer; transition:background .15s ease;}
+a.arow:hover{background:rgba(12,32,23,.045);}
+a.arow:focus-visible{outline:2px solid var(--ink); outline-offset:2px; border-radius:6px;}
+.val-link{display:inline-flex; align-items:center; gap:6px;}
+.val-link svg{opacity:.5; flex:0 0 auto;}
+a.arow:hover .val-link svg{opacity:.85;}

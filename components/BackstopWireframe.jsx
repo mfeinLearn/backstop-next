@@ -29,6 +29,25 @@ const reviewRows = [
   { name: 'Pepe', chain: 'Ethereum', value: '$1,970', logo: 'https://cryptologos.cc/logos/pepe-pepe-logo.png?v=040', alt: 'Pepe logo' },
 ];
 
+// Per-chain block explorer, keyed by the `chain` field on reviewRows.
+const explorers = {
+  Bitcoin: { name: 'mempool.space', tx: (h) => `https://mempool.space/tx/${h}` },
+  Ethereum: { name: 'Etherscan', tx: (h) => `https://etherscan.io/tx/${h}` },
+  Solana: { name: 'Solscan', tx: (h) => `https://solscan.io/tx/${h}` },
+  Arbitrum: { name: 'Arbiscan', tx: (h) => `https://arbiscan.io/tx/${h}` },
+};
+
+// Aligned to reviewRows order: BTC, ETH, SOL, ARB, PEPE (on Ethereum).
+// `full` hashes are placeholders — swap in real tx hashes from your swap flow.
+// Note the differing formats: BTC has no 0x prefix, Solana sigs are base58, EVM chains are 0x-hex.
+const txns = [
+  { full: 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855', short: 'e3b0…b855' },
+  { full: '0x5f1d8c3a9b2e7f04c6a1d8e3b9f72c50a4e1d7b8c3f6a9027e5b1d4c8a3f60e29', short: '0x5f1d…0e29' },
+  { full: '5KtPn1LGuxhFiwjxErkxTb7XxtLVYUBe6Cn33ej7ATNVyorhg7v8tFy7akMNXAB7p', short: '5KtP…AB7p' },
+  { full: '0x9a4f2c8e1b7d3056f9c2a8e4b1d7036c5a9e2f8b4d1c70639e5a2b8d4f1c70a36', short: '0x9a4f…0a36' },
+  { full: '0xc1b8a4f2e7d309561c8a4f2e7d309c561a8f4e2d7b309c5618a4f2e7d3095c61b', short: '0xc1b8…5c61' },
+];
+
 function StatusBadge({ status }) {
   if (status === 'Swapped') {
     return (
@@ -54,7 +73,7 @@ export default function PanicSell() {
   const [step, setStep] = useState(0);
   const [tick, setTick] = useState(0);
 
-  const next = () => setStep((s) => Math.min(s + 1, 3));
+  const next = () => setStep((s) => Math.min(s + 1, 4));
 
   useEffect(() => {
     if (step !== 2) return;
@@ -196,11 +215,54 @@ export default function PanicSell() {
             <div className="srow"><span className="k">Realised slippage</span><span className="v">0.04%</span></div>
             <div className="srow"><span className="k">Total fees</span><span className="v">$22</span></div>
           </div>
-          <button className="cta ghost" type="button" style={{ marginTop: 'auto' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z" /><path d="M8 7h8M8 11h6" /></svg>View txns</button>
+          <button className="cta ghost" type="button" style={{ marginTop: 'auto' }} onClick={next}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z" /><path d="M8 7h8M8 11h6" /></svg>View txns</button>
+        </section>
+
+        <section className={`screen txns-screen${step === 4 ? ' active' : ''}`} data-screen="4">
+          <p className="h">Transactions</p>
+          <p className="sub">5 swaps · routed via Li.Fi · confirmed on-chain</p>
+          <div style={{ marginTop: '10px' }}>
+            {reviewRows.map((row, i) => {
+              const ex = explorers[row.chain];
+              const href = ex ? ex.tx(txns[i].full) : undefined;
+              return (
+                <a
+                  className="arow"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={i === reviewRows.length - 1 ? { borderBottom: 'none' } : undefined}
+                  key={row.name}
+                >
+                  <div className="tok">
+                    <span className="badge"><img className="token-logo" src={row.logo} alt={row.alt} /></span>
+                    <div>
+                      <div className="nm">{row.name} → USDC</div>
+                      <div className="ch">{ex ? ex.name : row.chain} · {txns[i].short}</div>
+                    </div>
+                  </div>
+                  <span className="val val-link">
+                    {row.value}
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17 17 7M7 7h10v10" /></svg>
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+          <div className="summary">
+            <div className="srow"><span className="k">Confirmations</span><span className="v">5 / 5</span></div>
+            <div className="srow"><span className="k">Settlement time</span><span className="v">~38s</span></div>
+            <div className="srow tot"><span className="k">Total received</span><span className="v">$47,974 USDC</span></div>
+          </div>
+          <p className="dest" style={{ marginTop: '12px' }}>↗ View full route on Li.Fi explorer</p>
+          <button className="cta ghost" type="button" style={{ marginTop: 'auto' }} onClick={() => setStep(3)}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+            Back to summary
+          </button>
         </section>
       </div>
       <div className="prototype-controls" aria-label="Prototype progress">
-        {[0, 1, 2, 3].map((index) => (
+        {[0, 1, 2, 3, 4].map((index) => (
           <span className={`step-dot${step === index ? ' active' : ''}`} key={index} />
         ))}
         <button className="reset" type="button" onClick={() => setStep(0)}>Reset</button>
