@@ -7,7 +7,7 @@ async function main() {
   if (!address) throw new Error("Usage: run-scan 0xADDRESS");
   if (!apiKey) throw new Error("Set ZERION_KEY");
 
-  const result = await scan(address, apiKey, { includeDust: true, minUsd: 50 });
+  const result = await scan(address, apiKey, { includeDust: true, minUsd: 0 });
 
   console.log(`\nWallet: ${result.address}`);
   console.log(`Chain:  ${result.chain}`);

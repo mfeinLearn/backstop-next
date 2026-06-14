@@ -3,20 +3,44 @@ import { getAaveReserveTokens } from "./aave.js";
 const ZERION_BASE = "https://api.zerion.io/v1";
 const CHAIN = "ethereum"; 
 
+const AAVE_COLLATERAL_PREFIX = "aEth";                 // e.g. aEthWETH, aEthUSDC
+const AAVE_VARIABLE_DEBT_PREFIX = "variableDebtEth";   // e.g. variableDebtEthUSDC
+const AAVE_STABLE_DEBT_PREFIX = "stableDebtEth";
+
 function categorize(p) {
   const type = p.attributes.position_type;
   const protocol = (p.attributes.protocol ?? "").toLowerCase();
+  const symbol = p.attributes.fungible_info?.symbol ?? "";
+
+  // 1. Debt tokens -> loan. Checked first; these are unambiguous.
+  if (
+    symbol.startsWith(AAVE_VARIABLE_DEBT_PREFIX) ||
+    symbol.startsWith(AAVE_STABLE_DEBT_PREFIX)
+  ) {
+    return "loan";
+  }
+
+  // 2. aTokens -> collateral. The "aEth" prefix is specific to Aave V3 on
+  //    mainnet, so it won't collide with normal tokens like AAVE or aUSD.
+  if (symbol.startsWith(AAVE_COLLATERAL_PREFIX)) {
+    return "collateral";
+  }
+
+  // 3. Otherwise fall back to Zerion's own position_type.
   if (type === "loan") return "loan";
   if (type === "reward") return "reward";
   if (type === "staked" || type === "locked") return "staked";
-  if (type === "wallet") return "dust";
+
   if (type === "deposit") {
     if (
       protocol.includes("uniswap") || protocol.includes("aerodrome") ||
       protocol.includes("balancer") || protocol.includes("curve")
-    ) return "lp";
+    ) {
+      return "lp";
+    }
     return "collateral";
   }
+
   return "dust";
 }
 
@@ -87,7 +111,6 @@ export async function scan(address, apiKey, opts = {}) {
     .filter((p) => (p.attributes.value ?? 0) >= minUsd);
 
   const positions = [];
-
   for (const p of ethRows) {
     const category = categorize(p);
 
@@ -102,24 +125,31 @@ export async function scan(address, apiKey, opts = {}) {
       fungibleId,
     };
 
+
     let aave = null;
     if (category === "loan" || category === "collateral") {
-      const { aToken, variableDebtToken } = await getAaveReserveTokens(underlying.address);
-      aave = { aToken, variableDebtToken };
-    }
+      const symbol = p.attributes.fungible_info?.symbol ?? "";
 
-    const fi = p.attributes.fungible_info ?? {};   // <-- add
+      // If the position's token IS already an Aave token (aEth.../variableDebt...),
+      // we already hold the address — no lookup needed.
+      if (symbol.startsWith("aEth")) {
+        aave = { aToken: underlying.address, variableDebtToken: null };
+      } else if (symbol.startsWith("variableDebtEth") || symbol.startsWith("stableDebtEth")) {
+        aave = { aToken: null, variableDebtToken: underlying.address };
+      } else {
+        // Normal case: we have the underlying, look up its Aave tokens on-chain.
+        const { aToken, variableDebtToken } = await getAaveReserveTokens(underlying.address);
+        aave = { aToken, variableDebtToken };
+      }
+    }
 
     positions.push({
       chain: CHAIN,
       protocol: p.attributes.protocol ?? "wallet",
       category,
-      name: fi.name ?? null,                       // <-- add
-      symbol: fi.symbol ?? null,                   // <-- add
-      iconUrl: fi.icon?.url ?? null,               // <-- add
       valueUsd: p.attributes.value ?? 0,
       underlying,
-      aave, // null for non-Aave positions
+      aave, 
     });
   }
 
