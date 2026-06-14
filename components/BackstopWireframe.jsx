@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import '../app/globals.css';
-import logo from '../Product/Logo_BFB.png';
+import logo from '../Product/logo-3-cropped.png';
 
 const assets = ['BTC', 'ETH', 'SOL', 'ARB', 'PEPE'];
 const states = ['Queued', 'Transfering', 'Receiving tokens', 'Swapped'];
