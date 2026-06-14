@@ -2,9 +2,24 @@
 
 import { useEffect, useState } from 'react';
 import '../app/globals.css';
+import logo from '../Product/logo-3-cropped.png';
 
 const assets = ['BTC', 'ETH', 'SOL', 'ARB', 'PEPE'];
 const states = ['Queued', 'Transfering', 'Receiving tokens', 'Swapped'];
+const coins = [
+  { sx: '-154px', sy: '14px', mx: '-96px', my: '-42px', r0: '-18deg', r1: '128deg', r2: '246deg', d: '.00s' },
+  { sx: '142px', sy: '20px', mx: '96px', my: '-52px', r0: '24deg', r1: '-112deg', r2: '-226deg', d: '.03s' },
+  { sx: '-116px', sy: '126px', mx: '-138px', my: '44px', r0: '38deg', r1: '186deg', r2: '344deg', d: '.06s' },
+  { sx: '124px', sy: '132px', mx: '134px', my: '48px', r0: '-32deg', r1: '-194deg', r2: '-356deg', d: '.09s' },
+  { sx: '-34px', sy: '240px', mx: '-88px', my: '118px', r0: '16deg', r1: '154deg', r2: '312deg', d: '.12s' },
+  { sx: '42px', sy: '238px', mx: '92px', my: '112px', r0: '-12deg', r1: '-152deg', r2: '-318deg', d: '.15s' },
+  { sx: '-150px', sy: '-34px', mx: '-58px', my: '-94px', r0: '28deg', r1: '162deg', r2: '298deg', d: '.18s' },
+  { sx: '154px', sy: '-28px', mx: '54px', my: '-98px', r0: '-26deg', r1: '-158deg', r2: '-296deg', d: '.21s' },
+  { sx: '-82px', sy: '-92px', mx: '-122px', my: '-28px', r0: '-42deg', r1: '118deg', r2: '264deg', d: '.24s' },
+  { sx: '78px', sy: '-96px', mx: '124px', my: '-24px', r0: '44deg', r1: '-122deg', r2: '-268deg', d: '.27s' },
+  { sx: '-164px', sy: '188px', mx: '-62px', my: '88px', r0: '8deg', r1: '176deg', r2: '336deg', d: '.30s' },
+  { sx: '164px', sy: '184px', mx: '66px', my: '86px', r0: '-8deg', r1: '-176deg', r2: '-336deg', d: '.33s' },
+];
 
 const reviewRows = [
   { name: 'Bitcoin', chain: 'Bitcoin', value: '$21,480', logo: 'https://cryptologos.cc/logos/bitcoin-btc-logo.png?v=040', alt: 'Bitcoin logo' },
@@ -17,9 +32,8 @@ const reviewRows = [
 function StatusBadge({ status }) {
   if (status === 'Swapped') {
     return (
-      <span className="stat done">
+      <span className="stat done" aria-label="Swapped">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><path d="M20 6 9 17l-5-5" /></svg>
-        Swapped
       </span>
     );
   }
@@ -51,7 +65,7 @@ export default function PanicSell() {
       setTick(current);
       if (Math.floor(current / states.length) >= assets.length) {
         clearInterval(timer);
-        window.setTimeout(() => setStep(3), 550);
+        window.setTimeout(() => setStep(3), 1200);
       }
     }, 700);
     return () => clearInterval(timer);
@@ -67,8 +81,7 @@ export default function PanicSell() {
     <main className="wrap">
       <div className="popup">
         <div className="pophead">
-          <span className="ext-ico"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></svg></span>
-          <span className="ext-name">Panic Sell</span>
+          <img className="brand-logo" src={logo.src} alt="BFG" />
           <span className="ext-tools"><span className="dot" /><span className="dot" /><span className="dot" /></span>
         </div>
 
@@ -119,7 +132,7 @@ export default function PanicSell() {
           <button className="cta" type="button" onClick={next}>Confirm sell-off</button>
         </section>
 
-        <section className={`screen${step === 2 ? ' active' : ''}`} data-screen="2">
+        <section className={`screen route-screen${step === 2 ? ' active' : ''}`} data-screen="2">
           <div className="routehead">
             <div className="ring"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="19" r="3" /><circle cx="18" cy="5" r="3" /><path d="M9 19h6a3 3 0 0 0 3-3V8" /></svg></div>
             <p className="h">Routing through Li.Fi</p>
@@ -130,8 +143,9 @@ export default function PanicSell() {
               let status = 'Queued';
               if (i < routeIndex) status = 'Swapped';
               if (i === routeIndex) status = states[routePhase];
+              const celebrate = tick > 0 && routePhase === 0 && i === routeIndex - 1;
               return (
-                <div className="trow" style={i === assets.length - 1 ? { borderBottom: 'none' } : undefined} key={asset}>
+                <div className={`trow${celebrate ? ' celebrate' : ''}`} style={i === assets.length - 1 ? { borderBottom: 'none' } : undefined} key={asset}>
                   <span className="lab">Swap {asset} → USDC</span>
                   <StatusBadge status={status} />
                 </div>
@@ -144,7 +158,27 @@ export default function PanicSell() {
           </div>
         </section>
 
-        <section className={`screen${step === 3 ? ' active' : ''}`} data-screen="3">
+        <section className={`screen final-screen${step === 3 ? ' active' : ''}`} data-screen="3">
+          <div className="coin-stage" aria-hidden="true">
+            {coins.map((coin, index) => (
+              <span
+                className="collect-coin"
+                key={index}
+                style={{
+                  '--sx': coin.sx,
+                  '--sy': coin.sy,
+                  '--mx': coin.mx,
+                  '--my': coin.my,
+                  '--r0': coin.r0,
+                  '--r1': coin.r1,
+                  '--r2': coin.r2,
+                  '--d': coin.d,
+                }}
+              >
+                USDC
+              </span>
+            ))}
+          </div>
           <div className="checkwrap">
             <div className="check"><img className="usdc-logo" src="https://cryptologos.cc/logos/usd-coin-usdc-logo.png?v=040" alt="USDC logo" /></div>
             <span className="check-badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg></span>
@@ -154,7 +188,7 @@ export default function PanicSell() {
             <p className="sub">Everything converted in 38s</p>
           </div>
           <div style={{ textAlign: 'center', marginTop: '20px' }}>
-            <p className="bignum display" style={{ fontSize: '36px', color: 'var(--green-deep)' }}>$47,974</p>
+            <p className="bignum display" style={{ fontSize: '36px', color: 'var(--ink)' }}>$47,974</p>
             <p className="dest" style={{ marginTop: '7px' }}><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ verticalAlign: '-1px' }}><rect x="2" y="6" width="20" height="13" rx="2" /><path d="M16 12h.01" /></svg> USDC in wallet1 · 0x7a…3f</p>
           </div>
           <div className="summary" style={{ marginTop: '20px' }}>
@@ -164,6 +198,12 @@ export default function PanicSell() {
           </div>
           <button className="cta ghost" type="button" style={{ marginTop: 'auto' }}><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1z" /><path d="M8 7h8M8 11h6" /></svg>View txns</button>
         </section>
+      </div>
+      <div className="prototype-controls" aria-label="Prototype progress">
+        {[0, 1, 2, 3].map((index) => (
+          <span className={`step-dot${step === index ? ' active' : ''}`} key={index} />
+        ))}
+        <button className="reset" type="button" onClick={() => setStep(0)}>Reset</button>
       </div>
     </main>
   );
