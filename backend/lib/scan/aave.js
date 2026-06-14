@@ -1,7 +1,7 @@
 import { createPublicClient, http } from "viem";
 import { mainnet } from "viem/chains";
 
-const DATA_PROVIDER = "0x497a1994c46d4f6C864904A9f1fac6328Cb7C8a6";  //default public mainnet, if doesnt work use alchemy RPC instead
+const DATA_PROVIDER = "0x497a1994c46d4f6C864904A9f1fac6328Cb7C8a6";  //default public mainnet, if doesn't work use alchemy RPC instead
 
 const ABI = [
   {
