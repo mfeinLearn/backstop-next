@@ -87,6 +87,37 @@ export async function scan(address, apiKey, opts = {}) {
     .filter((p) => (p.attributes.value ?? 0) >= minUsd);
 
   const positions = [];
+  // for (const p of ethRows) {
+  //   const category = categorize(p);
+
+  //   const fungibleId = fungibleIdOf(p);
+  //   let impl = ethImpl(p);
+  //   if (!impl) impl = await resolveFungible(fungibleId, apiKey); // fallback
+
+  //   const underlying = {
+  //     address: impl?.address ?? null,
+  //     decimals: impl?.decimals ?? null,
+  //     amountWei: p.attributes.quantity?.int ?? null, // base units
+  //     fungibleId,
+  //   };
+
+
+  //   let aave = null;
+  //   if (category === "loan" || category === "collateral") {
+  //     const { aToken, variableDebtToken } = await getAaveReserveTokens(underlying.address);
+  //     aave = { aToken, variableDebtToken };
+  //   }
+
+  //   positions.push({
+  //     chain: CHAIN,
+  //     protocol: p.attributes.protocol ?? "wallet",
+  //     category,
+  //     valueUsd: p.attributes.value ?? 0,
+  //     underlying,
+  //     aave, // null for non-Aave positions
+  //   });
+  // }
+
   for (const p of ethRows) {
     const category = categorize(p);
 
@@ -101,17 +132,21 @@ export async function scan(address, apiKey, opts = {}) {
       fungibleId,
     };
 
-
     let aave = null;
     if (category === "loan" || category === "collateral") {
       const { aToken, variableDebtToken } = await getAaveReserveTokens(underlying.address);
       aave = { aToken, variableDebtToken };
     }
 
+    const fi = p.attributes.fungible_info ?? {};   // <-- add
+
     positions.push({
       chain: CHAIN,
       protocol: p.attributes.protocol ?? "wallet",
       category,
+      name: fi.name ?? null,                       // <-- add
+      symbol: fi.symbol ?? null,                   // <-- add
+      iconUrl: fi.icon?.url ?? null,               // <-- add
       valueUsd: p.attributes.value ?? 0,
       underlying,
       aave, // null for non-Aave positions
