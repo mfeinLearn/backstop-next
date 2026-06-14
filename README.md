@@ -1,6 +1,6 @@
-# Backstop — Wind-Down Wireframe (Next.js)
+# BFB — Big Fantastic Button (Next.js)
 
-Interactive wireframe for the Backstop agent wind-down / dead-man's switch flow.
+BFB is an application for the Backstop agent wind-down / dead-man's-switch flow.
 
 ## Run
 
@@ -48,4 +48,4 @@ Theme toggle (light/dark) is in the top-right of the header.
   keyframes/utility classes live in `globals.css`.
 - The MetaMask fox and World marks are hand-built SVG placeholders — swap in the
   official brand assets for production.
-# backstop-next
+
